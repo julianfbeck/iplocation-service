@@ -39,8 +39,6 @@ func main() {
 		// Write the JSON string to the response.
 		fmt.Fprint(w, string(pJSON))
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, "Location: %s", location)
-
 	})
 
 	http.ListenAndServe(":3000", nil)
