@@ -148,6 +148,7 @@ func (db *IPDB) LookUpIP(input string) (DBResponse, error) {
 
 	response := DBResponse{
 		City_EN:      record.City.Names["en"],
+		Country_Code: record.Country.IsoCode,
 		Country_DE:   record.Country.Names["de"],
 		Country_EN:   record.Country.Names["en"],
 		Continent_EN: record.Continent.Names["en"],
