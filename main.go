@@ -19,8 +19,8 @@ func main() {
 		ip := c.IP()
 		// X-Real-Ip or X-Forwarded-For headers
 
-		fmt.Println(c.Request().Header.Peek("X-Real-Ip"))
-		fmt.Println(c.Request().Header.Peek("X-Forwarded-For"))
+		fmt.Println(string(c.Request().Header.Peek("X-Real-Ip")))
+		fmt.Println(string(c.Request().Header.Peek("X-Forwarded-For")))
 
 		// get location from ip address
 		location, err := db.LookUpIP(ip)
