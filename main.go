@@ -18,7 +18,8 @@ func main() {
 		// get correct ip even if behind proxy
 		ip := c.IP()
 		// X-Real-Ip or X-Forwarded-For headers
-
+		text := string(c.Request().Header.Header())
+		fmt.Println(text)
 		fmt.Println(string(c.Request().Header.Peek("X-Real-Ip")))
 		fmt.Println(string(c.Request().Header.Peek("X-Forwarded-For")))
 
