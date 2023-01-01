@@ -18,6 +18,7 @@ func main() {
 		// get ip address from request
 		ip := c.IP()
 		fmt.Println(c.IPs())
+		fmt.Println(c.Hostname())
 		// get location from ip address
 		location, err := db.LookUpIP(ip)
 		if err != nil {
