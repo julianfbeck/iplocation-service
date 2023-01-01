@@ -15,10 +15,13 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		// get ip address from request
+		// get correct ip even if behind proxy
 		ip := c.IP()
-		fmt.Println(c.IPs())
-		fmt.Println(c.Hostname())
+		// X-Real-Ip or X-Forwarded-For headers
+
+		fmt.Println(c.Request().Header.Peek("X-Real-Ip"))
+		fmt.Println(c.Request().Header.Peek("X-Forwarded-For"))
+
 		// get location from ip address
 		location, err := db.LookUpIP(ip)
 		if err != nil {
