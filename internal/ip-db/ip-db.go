@@ -23,6 +23,7 @@ type DBResponse struct {
 	Longitude    string `json:"longitude"`
 	Latitude     string `json:"latitude"`
 	Subdivision  string `json:"subdivision"`
+	IP           string `json:"ip"`
 }
 
 type IPDB struct {
@@ -62,6 +63,7 @@ func downloadCurrentIPDB() (string, error) {
 		return "", err
 	}
 	defer file.Close()
+	fmt.Println("Downloading file...")
 
 	// Copy the data from the response body to the file
 	_, err = io.Copy(file, resp.Body)
@@ -74,6 +76,7 @@ func downloadCurrentIPDB() (string, error) {
 		fmt.Println(err)
 		return "", err
 	}
+	fmt.Println("Download complete! File saved to", db)
 
 	return db, nil
 
@@ -151,6 +154,7 @@ func (db *IPDB) LookUpIP(input string) (DBResponse, error) {
 		Continent_DE: record.Continent.Names["de"],
 		Longitude:    fmt.Sprintf("%f", record.Location.Longitude),
 		Latitude:     fmt.Sprintf("%f", record.Location.Latitude),
+		IP:           input,
 	}
 	if len(record.Subdivisions) > 0 {
 		response.Subdivision = record.Subdivisions[0].Names["en"]
