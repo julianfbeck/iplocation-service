@@ -35,10 +35,9 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
+		w.Header().Set("Content-Type", "application/json")
 		// Write the JSON string to the response.
 		fmt.Fprint(w, string(pJSON))
-		w.Header().Set("Content-Type", "application/json")
 	})
 
 	http.ListenAndServe(":3000", nil)
