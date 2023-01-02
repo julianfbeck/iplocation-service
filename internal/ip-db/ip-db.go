@@ -36,7 +36,7 @@ func downloadCurrentIPDB() (string, error) {
 
 	currentFilename := "dbip-country-lite-" + monthYear + ".mmdb"
 	if _, err := os.Stat(currentFilename); err == nil {
-		fmt.Println("File already exists, skipping download")
+		log.Println("File already exists, skipping download")
 		return currentFilename, err
 	}
 	url := "https://download.db-ip.com/free/dbip-city-lite-" + monthYear + ".mmdb.gz"
@@ -63,7 +63,7 @@ func downloadCurrentIPDB() (string, error) {
 		return "", err
 	}
 	defer file.Close()
-	fmt.Println("Downloading file...")
+	log.Println("Downloading file...")
 
 	// Copy the data from the response body to the file
 	_, err = io.Copy(file, resp.Body)
@@ -73,10 +73,10 @@ func downloadCurrentIPDB() (string, error) {
 
 	db, err := unzip("dbip-country-lite-" + monthYear + ".mmdb.gz")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return "", err
 	}
-	fmt.Println("Download complete! File saved to", db)
+	log.Println("Download complete! File saved to", db)
 
 	return db, nil
 
@@ -135,6 +135,41 @@ func getCurrentMonthYear() string {
 	// Format the month and year as "YYYY-MM"
 	monthYear := now.Format("2006-01")
 	return monthYear
+
+}
+func (db *IPDB) UpdateDB() error {
+	log.Println("Updating IPDB...")
+
+	db_filename, err := downloadCurrentIPDB()
+	if err != nil {
+		return err
+	}
+
+	db.db.Close()
+	db.db, err = geoip2.Open(db_filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// remove all files except current db_filename
+	files, err := os.ReadDir(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// remove all filename exepct current db
+	for _, file := range files {
+		if file.Name() != db_filename {
+			// remove all files ending with .mmdb or .gz
+			if file.Name()[len(file.Name())-4:] == ".mmdb" || file.Name()[len(file.Name())-3:] == ".gz" {
+				err := os.Remove(file.Name())
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
+		}
+	}
+	return nil
 
 }
 

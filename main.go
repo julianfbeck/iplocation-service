@@ -3,19 +3,24 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 
 	ipdb "github.com/julianfbeck/ip-location-go-server/internal/ip-db"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
 	db, err := ipdb.NewDB()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
+	c := cron.New()
 
-	// app.Listen(":3000")
+	// c.AddFunc("0 0 0 3 * *", func() { db.UpdateDB() })
+	c.AddFunc("*/1 * * * *", func() { db.UpdateDB() })
+	c.Start()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		clientIP := r.Header.Get("X-Real-Ip")
 		if clientIP == "" {
@@ -26,7 +31,7 @@ func main() {
 		}
 		location, err := db.LookUpIP(clientIP)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		}
@@ -39,7 +44,7 @@ func main() {
 		// Write the JSON string to the response.
 		fmt.Fprint(w, string(pJSON))
 	})
-
+	log.Println("Starting server on port 3000")
 	http.ListenAndServe(":3000", nil)
 
 }
