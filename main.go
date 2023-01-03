@@ -22,6 +22,9 @@ func main() {
 	c.AddFunc("*/1 * * * *", func() { db.UpdateDB() })
 	c.Start()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		clientIP := r.Header.Get("X-Real-Ip")
 		if clientIP == "" {
 			clientIP = r.Header.Get("X-Forwarded-For")
