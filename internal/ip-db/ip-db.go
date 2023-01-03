@@ -160,7 +160,7 @@ func (db *IPDB) UpdateDB() error {
 	for _, file := range files {
 		if file.Name() != db_filename {
 			// remove all files ending with .mmdb or .gz
-			if len(file.Name()) < 4 {
+			if len(file.Name()) < 10 {
 				if file.Name()[len(file.Name())-4:] == ".mmdb" || file.Name()[len(file.Name())-3:] == ".gz" {
 					err := os.Remove(file.Name())
 					if err != nil {
